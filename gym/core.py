@@ -218,6 +218,10 @@ class Space(object):
     code that applies to any Env. For example, you can choose a random
     action.
     """
+    def __init__(self, shape=None, dtype=None):
+        import numpy as np # takes about 300-400ms to import, so we load lazily
+        self.shape = None if shape is None else tuple(shape)
+        self.dtype = None if dtype is None else np.dtype(dtype)
 
     def sample(self):
         """
@@ -232,6 +236,8 @@ class Space(object):
         """
         raise NotImplementedError
 
+    __contains__ = contains
+
     def to_jsonable(self, sample_n):
         """Convert a batch of samples from this space to a JSONable data type."""
         # By default, assume identity is JSONable
@@ -241,6 +247,7 @@ class Space(object):
         """Convert a JSONable data type to a batch of samples from this space."""
         # By default, assume identity is JSONable
         return sample_n
+
 
 class Wrapper(Env):
     # Clear metadata so by default we don't override any keys.
